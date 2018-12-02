@@ -16,7 +16,8 @@ def initialize(ses_region):
         logger = getLogger(__name__)
         logger.setLevel(INFO)
     if ses_client is None:
-        ses_client = client('ses', region_name=os.environ.get('SES_REGION') or ses_region or os.environ.get('AWS_REGION'))
+        ses_client = client('ses',
+                            region_name=os.environ.get('SES_REGION') or ses_region or os.environ.get('AWS_REGION'))
     if s3_client is None:
         s3_client = client('s3')
 
@@ -141,15 +142,3 @@ def handler(event, context, forward_mapping=None, ses_incoming_bucket=None, s3_k
 
     logger.info('Process finished successfully. %s', processed_message.as_bytes())
     return raw_message, processed_message.as_bytes()
-
-
-def lambda_handler(event, context):
-    handler(
-        event,
-        context,
-        forward_mapping={'webmaster@sample.com': ['sample@gmail.com', ]},
-        ses_incoming_bucket='inbox.sample',
-        s3_key_prefix='webmaster/',
-        from_email='webmaster@sample.com',
-        subject_prefix='[Forward] ',
-    )
